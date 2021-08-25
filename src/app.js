@@ -63,3 +63,101 @@ const galleryItems = [
     description: 'Lighthouse Coast Sea',
   },
 ];
+
+
+// - Создание и рендер разметки по массиву данных `galleryItems` из `app.js` и
+//   предоставленному шаблону.
+
+const refs = {
+  jsLightbox: document.querySelector('.js-lightbox'),
+  lightboxOverlay: document.querySelector('.lightbox__overlay'),
+  lightboxContent: document.querySelector('.lightbox__content'),
+  lightboxImage: document.querySelector('.lightbox__image'),
+  lightboxButton:document.querySelector('.lightbox__button'),
+}
+
+const gallery = document.querySelector('.js-gallery');
+
+const createdLi = galleryItems.map(({preview,original,description}) => {
+return  `
+  <li class="gallery__item">
+    <a
+      class="gallery__link"
+      href="${original}"
+    >
+      <img
+        class="gallery__image"
+        src="${preview}"
+        data-source="${original}"
+        alt="${description}"
+      />
+    </a>
+  </li>
+    `
+
+}).join('');
+
+gallery.insertAdjacentHTML('afterbegin', createdLi);
+
+// - Реализация делегирования на галерее `ul.js-gallery` и получение `url` большого
+//   изображения.
+
+gallery.addEventListener('click', onMouseClick);
+
+
+
+function onMouseClick(e) {
+  e.preventDefault();
+  
+  if (!e.target.classList.contains('gallery__image')) {
+    return
+  }
+
+// - Открытие модального окна по клику на элементе галереи.
+  refs.jsLightbox.classList.add('is-open');
+
+  refs.lightboxImage.src = e.target.dataset.source;
+  // - Закрытие модального окна по нажатию клавиши `ESC`.
+  window.addEventListener('keydown', onKeyBtnPress);
+ // - Закрытие модального окна по клику на кнопку+на оверлей
+  refs.jsLightbox.addEventListener('click', handelModalClick);
+}
+
+
+// - Закрытие модального окна по клику на кнопку
+
+// refs.lightboxButton.addEventListener('click', onModalBtnClick);
+
+// function onModalBtnClick(e) {
+//    refs.jsLightbox.classList.remove('is-open');
+// } 
+
+function handelModalClick(e) {
+  if (e.target.classList.contains('lightbox__button') || e.target.classList.contains('lightbox__overlay')) {
+    closeModal();
+  }
+}
+
+
+function closeModal() {
+  refs.lightboxImage.src = '';
+  refs.jsLightbox.classList.remove('is-open');
+}
+
+// - Закрытие модального окна по нажатию клавиши `ESC`.
+
+function onKeyBtnPress(e) {
+  if (e.code === 'Escape') {
+   closeModal() 
+  }
+};
+
+// function changeModalPictureOnRightPress() {
+ 
+
+// };
+
+// function changeModalPictureOnLeftPress() {
+ 
+
+// };
